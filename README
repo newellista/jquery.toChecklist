@@ -1,0 +1,3 @@
+NOTE: This project is entirely the work of Scott Horlbeck and the UNM Health Sciences Library and Informatics Center.  I wanted to make a couple of minor changes so that it would play well with Rails, and asked Scott if he would mind if I created a git repo to house it.  He graciously consented.
+
+The toChecklist plug-in for jQuery will give you the functionality of a SELECT box without the need to ctrl+click items to select them. Go to http://www.scotthorlbeck.com/code/tochecklist/ for a complete explanation and demo.
