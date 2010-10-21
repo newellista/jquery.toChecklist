@@ -107,6 +107,7 @@ jQuery.fn.toChecklist = function(o) { // "o" stands for options
 		                         // submitted to the server as the variable containing the checked
 		                         // items. Set to false to use the "name" attribute instead (this makes
 		                         // it compatible with Drupal's Views module, among other things.)
+		railsMode: false,
 		maxNumOfSelections : -1, // If you want to limit the number of items a user can select in a
 		                         // checklist, set this to a positive integer.
 		                         
@@ -148,6 +149,8 @@ jQuery.fn.toChecklist = function(o) { // "o" stands for options
 		// Hang on to the important information about this <select> element.
 		var jSelectElem = $(this);
 		var jSelectElemId = jSelectElem.attr('id');
+		var jSelectElemName = (o.railsMode ? jSelectElem.attr('name') : "")
+		
 		if (jSelectElemId == '' || !o.preferIdOverName) {
 			// Regardless of whether this is a PHP environment, we need an id
 			// for the element, and it shouldn't have brackets [] in it.
@@ -206,9 +209,18 @@ jQuery.fn.toChecklist = function(o) { // "o" stands for options
 			
 			var arrayBrackets = (o.submitDataAsArray)? '[]' : '';
 
-			$(this).replaceWith('<li tabindex="0"><input type="checkbox" value="'+checkboxValue
-				+'" name="'+jSelectElemId+arrayBrackets+'" id="'+checkboxId+'" ' + selected + disabled
-				+' /><label for="'+checkboxId+'"'+disabledClass+'>'+labelText+'</label></li>');
+			if( o.railsMode )
+			{
+				$(this).replaceWith('<li tabindex="0"><input type="checkbox" value="'+checkboxValue
+					+'" name="'+jSelectElemName+'" id="'+checkboxId+'" ' + selected + disabled
+					+' /><label for="'+checkboxId+'"'+disabledClass+'>'+labelText+'</label></li>');
+			}
+			else
+			{
+				$(this).replaceWith('<li tabindex="0"><input type="checkbox" value="'+checkboxValue
+					+'" name="'+jSelectElemId+arrayBrackets+'" id="'+checkboxId+'" ' + selected + disabled
+					+' /><label for="'+checkboxId+'"'+disabledClass+'>'+labelText+'</label></li>');
+			}
 			// Hide the checkboxes.
 			if (o.showCheckboxes === false) {
 				// We could use display:none here, but IE can't handle it. Better
@@ -243,8 +255,16 @@ jQuery.fn.toChecklist = function(o) { // "o" stands for options
 		// Also, enclose it inside another div that has the original id, so developers
 		// can access it as before. Also, this allows the search box to be inside
 		// the div as well.
-		jSelectElem.replaceWith('<div id="'+jSelectElemId+'"><div id="'+checklistId+'">'
-			+'<ul>'+jSelectElem.attr('innerHTML')+'</ul></div></div>');
+		if( o.railsMode )
+		{
+			jSelectElem.replaceWith('<div id="'+jSelectElemId+'" name="'+jSelectElemName+'"><div id="'+checklistId+'">'
+				+'<ul><input type="hidden" value="" name="'+jSelectElemName+'">'+jSelectElem.attr('innerHTML')+'</ul></div></div>');
+		}
+		else
+		{
+			jSelectElem.replaceWith('<div id="'+jSelectElemId+'" name="'+jSelectElemName+'"><div id="'+checklistId+'">'
+				+'<ul>'+jSelectElem.attr('innerHTML')+'</ul></div></div>');
+		}
 		var checklistDivId = '#'+checklistId;
 
 		// We're going to create a custom HTML attribute in the main div box (the one
